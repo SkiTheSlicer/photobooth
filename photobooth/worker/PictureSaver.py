@@ -17,10 +17,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
 import logging
 import os
+from pkg_resources import get_distribution, DistributionNotFound
 
 from .WorkerTask import WorkerTask
+import piexif
 
 
 class PictureSaver(WorkerTask):
@@ -39,3 +42,13 @@ class PictureSaver(WorkerTask):
         logging.info('Saving picture as %s', filename)
         with open(filename, 'wb') as f:
             f.write(picture.getbuffer())
+        try:
+            __version__ = get_distribution('photobooth').version
+        except DistributionNotFound:
+            __version__ = 'unknown_version'
+        exif_dict = piexif.load(filename)
+        exif_dict['0th'][piexif.ImageIFD.Make] = 'Photobooth'
+        exif_dict['0th'][piexif.ImageIFD.Model] = __version__
+        exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = datetime.now().strftime('%F %T')
+        exif_bytes = piexif.dump(exif_dict)
+        piexif.insert(exif_bytes, filename)

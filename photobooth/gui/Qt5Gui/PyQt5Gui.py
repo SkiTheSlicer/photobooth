@@ -76,7 +76,9 @@ class PyQt5Gui(GuiSkeleton):
 
         # Load additional fonts
         fonts = ['photobooth/gui/Qt5Gui/fonts/AmaticSC-Regular.ttf',
-                 'photobooth/gui/Qt5Gui/fonts/AmaticSC-Bold.ttf']
+                 'photobooth/gui/Qt5Gui/fonts/AmaticSC-Bold.ttf',
+                 'ProximaNovaAlt-Reg.ttf',
+                 'ProximaNovaAlt-RegIt.ttf']
         self._fonts = QtGui.QFontDatabase()
         for font in fonts:
             self._fonts.addApplicationFont(font)

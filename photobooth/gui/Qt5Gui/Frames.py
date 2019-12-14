@@ -84,8 +84,8 @@ class IdleMessage(QtWidgets.QFrame):
         super().__init__()
         self.setObjectName('IdleMessage')
 
-        self._message_label = _('Hit the')
-        self._message_button = _('Button!')
+        self._message_label = _('Enjoy our Photobooth!')
+        self._message_button = _('Tap the Floor Pedal!')
 
         self.initFrame(trigger_action)
 
@@ -108,7 +108,7 @@ class GreeterMessage(QtWidgets.QFrame):
         super().__init__()
         self.setObjectName('GreeterMessage')
 
-        self._text_title = _('Get ready!')
+        self._text_title = _('Get ready!\nHold pose until countdown restarts.')
         self._text_button = _('Start countdown')
 
         num_pictures = max(num_x * num_y - len(skip), 1)
@@ -145,7 +145,7 @@ class CaptureMessage(QtWidgets.QFrame):
 
         num_pictures = max(num_x * num_y - len(skip), 1)
         if num_pictures > 1:
-            self._text = _('Picture {} of {}...').format(num_picture,
+            self._text = _('Taking Picture {} of {}...').format(num_picture,
                                                          num_pictures)
         else:
             self._text = 'Taking a photo...'
