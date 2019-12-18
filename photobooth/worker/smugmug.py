@@ -201,7 +201,10 @@ def setup(config_path):
     config = configparser.ConfigParser()
     config.read(config_path)
     if config['SmugMug'].getboolean('enable') is False:
+        print('[DEBUG] SmugMug upload is disabled.')
         return False, False
+    else:
+        print('[DEBUG] SmugMug upload is enabled.')
     ## App info (Account Settings -> Me -> API Keys -> Photobooth)
     api_key = config['SmugMug'].get('api_key')
     api_secret = config['SmugMug'].get('api_secret')
@@ -246,3 +249,4 @@ if __name__ == '__main__':
         sys.exit(0)
     # Upload image to custom album
     upload_resp = upload_image(session, album, sys.argv[1]) # Currently defaults to Content-Type 'image/jpeg'
+

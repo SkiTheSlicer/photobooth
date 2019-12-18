@@ -87,7 +87,7 @@ class IdleMessage(QtWidgets.QFrame):
         display_url = config['SmugMug'].get('display_url')
         album_name = config['SmugMug'].get('album_name')
         album_password = config['SmugMug'].get('album_password')
-        print(display_url, album_name, album_password)
+        #print(display_url, album_name, album_password)
 
         super().__init__()
         self.setObjectName('IdleMessage')
@@ -1134,6 +1134,25 @@ class Settings(QtWidgets.QFrame):
                       self.get('UploadWebdav', 'user').text())
         self._cfg.set('UploadWebdav', 'password',
                       self.get('UploadWebdav', 'password').text())
+
+        self._cfg.set('SmugMug', 'enable',
+                      str(self.get('SmugMug', 'enable').isChecked()))
+        self._cfg.set('SmugMug', 'display_url',
+                      self.get('SmugMug', 'display_url').text())
+        self._cfg.set('SmugMug', 'api_key',
+                      self.get('SmugMug', 'api_key').text())
+        self._cfg.set('SmugMug', 'api_secret',
+                      self.get('SmugMug', 'api_secret').text())
+        self._cfg.set('SmugMug', 'access_token',
+                      self.get('SmugMug', 'access_token').text())
+        self._cfg.set('SmugMug', 'token_secret',
+                      self.get('SmugMug', 'token_secret').text())
+        self._cfg.set('SmugMug', 'folder_name',
+                      self.get('SmugMug', 'folder_name').text())
+        self._cfg.set('SmugMug', 'album_name',
+                      self.get('SmugMug', 'album_name').text())
+        self._cfg.set('SmugMug', 'album_password',
+                      self.get('SmugMug', 'album_password').text())
 
         self._cfg.write()
         self._restartAction()
