@@ -26,6 +26,12 @@ from .WorkerTask import WorkerTask
 import piexif
 
 
+try:
+    __version__ = get_distribution('photobooth').version
+except DistributionNotFound:
+    __version__ = 'unknown_version'
+
+
 class PictureSaver(WorkerTask):
 
     def __init__(self, basename):
@@ -42,13 +48,14 @@ class PictureSaver(WorkerTask):
         logging.info('Saving picture as %s', filename)
         with open(filename, 'wb') as f:
             f.write(picture.getbuffer())
-        try:
-            __version__ = get_distribution('photobooth').version
-        except DistributionNotFound:
-            __version__ = 'unknown_version'
+        dt_now = datetime.now()
         exif_dict = piexif.load(filename)
+        #exif_dict['0th'].pop(34665, None)  # remove old pointer
         exif_dict['0th'][piexif.ImageIFD.Make] = 'Photobooth'
         exif_dict['0th'][piexif.ImageIFD.Model] = __version__
-        exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = datetime.now().strftime('%F %T')
+        exif_dict['Exif'][piexif.ExifIFD.DateTimeOriginal] = dt_now.strftime('%F %T')
+        exif_dict['Exif'][piexif.ExifIFD.SubSecTimeOriginal] = dt_now.strftime('%f')[:2]
+        exif_dict['Exif'][piexif.ExifIFD.DateTimeDigitized] = dt_now.strftime('%F %T')
+        exif_dict['Exif'][piexif.ExifIFD.SubSecTimeDigitized] = dt_now.strftime('%f')[:2]
         exif_bytes = piexif.dump(exif_dict)
         piexif.insert(exif_bytes, filename)
