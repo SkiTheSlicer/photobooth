@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import configparser
 import logging
 import os
 import subprocess
@@ -81,10 +82,19 @@ class IdleMessage(QtWidgets.QFrame):
 
     def __init__(self, trigger_action):
 
+        config = configparser.ConfigParser()
+        config.read('photobooth.cfg')
+        display_url = config['SmugMug'].get('display_url')
+        album_name = config['SmugMug'].get('album_name')
+        album_password = config['SmugMug'].get('album_password')
+        print(display_url, album_name, album_password)
+
         super().__init__()
         self.setObjectName('IdleMessage')
-
-        self._message_label = _('Enjoy our Photobooth!')
+        if config['SmugMug'].getboolean('enable'):
+            self._message_label = _(f'{display_url}\nAlbum Name: {album_name}\nAlbum Password: {album_password}')
+        else:
+            self._message_label = _('Enjoy the Photobooth.')
         self._message_button = _('Tap the Floor Pedal!')
 
         self.initFrame(trigger_action)
@@ -957,10 +967,56 @@ class Settings(QtWidgets.QFrame):
         lay_auth.addWidget(QtWidgets.QLabel('Password:'))
         lay_auth.addWidget(password)
 
+        self.init('SmugMug')
+
+        sm_enable = QtWidgets.QCheckBox()
+        sm_enable.setChecked(self._cfg.getBool('SmugMug', 'enable'))
+        self.add('SmugMug', 'enable', sm_enable)
+
+        sm_url = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'display_url'))
+        self.add('SmugMug', 'display_url', sm_url)
+
+        sm_api_key = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'api_key'))
+        self.add('SmugMug', 'api_key', sm_api_key)
+        sm_api_secret = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'api_secret'))
+        self.add('SmugMug', 'api_secret', sm_api_secret)
+        lay_api = QtWidgets.QHBoxLayout()
+        lay_api.addWidget(sm_api_key)
+        lay_api.addWidget(QtWidgets.QLabel('API Secret:'))
+        lay_api.addWidget(sm_api_secret)
+
+        sm_access_token = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'access_token'))
+        self.add('SmugMug', 'access_token', sm_access_token)
+        sm_token_secret = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'token_secret'))
+        self.add('SmugMug', 'token_secret', sm_token_secret)
+        lay_token = QtWidgets.QHBoxLayout()
+        lay_token.addWidget(sm_access_token)
+        lay_token.addWidget(QtWidgets.QLabel('Token Secret:'))
+        lay_token.addWidget(sm_token_secret)
+
+        sm_folder_name = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'folder_name'))
+        self.add('SmugMug', 'folder_name', sm_folder_name)
+
+        sm_album_name = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'album_name'))
+        self.add('SmugMug', 'album_name', sm_album_name)
+        sm_album_pass = QtWidgets.QLineEdit(self._cfg.get('SmugMug', 'album_password'))
+        self.add('SmugMug', 'album_password', sm_album_pass)
+        lay_album = QtWidgets.QHBoxLayout()
+        lay_album.addWidget(sm_album_name)
+        lay_album.addWidget(QtWidgets.QLabel('Album Password:'))
+        lay_album.addWidget(sm_album_pass)
+
         layout = QtWidgets.QFormLayout()
         layout.addRow(_('Enable WebDAV upload:'), enable)
         layout.addRow(_('URL (folder must exist):'), url)
         layout.addRow(_('Server requires auth:'), lay_auth)
+        #layout.addRow()
+        layout.addRow(_('Enable SmugMug upload:'), sm_enable)
+        layout.addRow(_('URL to display:'), sm_url)
+        layout.addRow(_('API Key:'), lay_api)
+        layout.addRow(_('Access Token:'), lay_token)
+        layout.addRow(_('Top Folder Name:'), sm_folder_name)
+        layout.addRow(_('Sub Album Name:'), lay_album)
 
         widget = QtWidgets.QWidget()
         widget.setLayout(layout)

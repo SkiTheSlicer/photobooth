@@ -24,7 +24,12 @@ from pkg_resources import get_distribution, DistributionNotFound
 
 from .WorkerTask import WorkerTask
 import piexif
-
+from . import smugmug
+session, album = smugmug.setup('photobooth.cfg')
+#if not session:
+#    logging.info('SmugMug upload is disabled.')
+#else:
+#    logging.info('SmugMug upload is enabled.')
 
 try:
     __version__ = get_distribution('photobooth').version
@@ -59,3 +64,5 @@ class PictureSaver(WorkerTask):
         exif_dict['Exif'][piexif.ExifIFD.SubSecTimeDigitized] = dt_now.strftime('%f')[:2]
         exif_bytes = piexif.dump(exif_dict)
         piexif.insert(exif_bytes, filename)
+        if session and 'shot' not in filename:
+            smugmug.upload_image(session, album, filename)
