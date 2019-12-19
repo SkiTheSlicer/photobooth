@@ -84,17 +84,16 @@ class IdleMessage(QtWidgets.QFrame):
 
         config = configparser.ConfigParser()
         config.read('photobooth.cfg')
-        display_url = config['SmugMug'].get('display_url')
+        display_url = config['SmugMug'].get('display_url') #self._cfg.get('SmugMug', 'display_url')
         album_name = config['SmugMug'].get('album_name')
         album_password = config['SmugMug'].get('album_password')
-        #print(display_url, album_name, album_password)
 
         super().__init__()
         self.setObjectName('IdleMessage')
         if config['SmugMug'].getboolean('enable'):
-            self._message_label = _(f'{display_url}\nAlbum Name: {album_name}\nAlbum Password: {album_password}')
+            self._message_label = _(f'{display_url}\nAlbum: {album_name}\nPassword: {album_password}')
         else:
-            self._message_label = _('Enjoy the Photobooth.')
+            self._message_label = _(f'Check the event page later\nfor your Photobooth photos!\n{display_url}')
         self._message_button = _('Tap the Floor Pedal!')
 
         self.initFrame(trigger_action)
